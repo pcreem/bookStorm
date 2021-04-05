@@ -11,17 +11,15 @@ class DatabaseController implements StoreSchema
 
     public function __construct($pdo){
         $this->pdo = $pdo;
-        $this->createTablesPrecedure();
+        $this->createTables();
     }
 
-    public function createTablesPrecedure(){
+    public function createTables(){
         $this->pdo->query('
         DROP PROCEDURE IF EXISTS CreateTables
         ');
 
         $this->pdo->query('
-        DELIMITER //
-
         CREATE PROCEDURE CreateTables()
         BEGIN
         
@@ -92,11 +90,7 @@ class DatabaseController implements StoreSchema
         PRIMARY KEY (id)
         );
         
-        END //
-        ');
-
-        $this->pdo->query('
-        DELIMITER ;
+        END 
         ');
 
         $this->pdo->query('

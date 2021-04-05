@@ -6,7 +6,7 @@ interface StoreSchema
 {
     public function __construct($pdo);
 
-    public function createTablesPrecedure();
+    public function createTables();
 
     public function importData();
 }
