@@ -1,0 +1,12 @@
+{
+    "name": "backend/bookstorm",
+    "description": "practice sql, api, unit test in book store topic",
+    "autoload": {
+        "psr-4": {
+            "App\\":"App/"
+        }
+    },
+    "require": {
+        "vlucas/phpdotenv": "^5.3"
+    }
+}
