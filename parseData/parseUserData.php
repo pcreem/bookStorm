@@ -1,15 +1,17 @@
 <?php
-// check laravel seeding info 
-// setup relation database
-// write API document
-// build API
+require_once __DIR__.'/../vendor/autoload.php';
+use App\Middleware\Database\ParseDatetime;
 
-function getBookname($dissectUserStringData){
+$parseDatetime = new ParseDatetime;
+
+function organizeUserData($dissectUserStringData){
     $dissectObj = json_decode($dissectUserStringData); 
-    $dissectArr = $dissectObj->purchaseHistory ?? null;
-    $storeName = $dissectArr ? $dissectArr[0]->storeName : "no books here\n$dissectUserStringData";
+    $id = $dissectObj->id;
+    $name = $dissectObj->name;
+    $cashBalance = $dissectObj->cashBalance;
+    $purchaseHistory = $dissectObj->purchaseHistory ?? null;
 
-    return $dissectObj->id . '  ' . $storeName;
+    return [$id, $name, $cashBalance, $purchaseHistory];
 }
 
 $str = file_get_contents("./user_data.json");
@@ -17,8 +19,8 @@ $str = ltrim($str,"[");
 $str = substr_replace($str,"",strrpos($str,"]"));
 
 $pattern = "/cashBalance/";
+$processedUserData = [];
 
-// Process data into json formate
 while(strlen($str) > 0){
 
     $endpos = strpos($str,"}",strpos($str,"}\n    ]\n")+1);
@@ -28,17 +30,35 @@ while(strlen($str) > 0){
         $fisrtPart = rtrim(trim(substr($dissectUser,0,$midpos)),',');
         $secondPart = substr($dissectUser,$midpos);
         
-        echo getBookname($fisrtPart);
-        echo "\n---------------\n";
-        echo getBookname($secondPart);
-        echo "\n---------------\n";
+        array_push($processedUserData,organizeUserData($fisrtPart));
+        array_push($processedUserData,organizeUserData($secondPart));
     }
     else{
-        echo getBookname($dissectUser);
-        echo "\n---------------\n";
+        array_push($processedUserData,organizeUserData($dissectUser));
     }
 
     $str = substr($str,$endpos+3,strlen($str));
-}    
+}  
+
+foreach ($processedUserData as $val){
+
+    $id = $val[0];
+    $name = $val[1];
+    $cashBalance = $val[2];
+
+    echo "$id $name $cashBalance\n";
+
+    foreach ($val[3] as $purchaseHistory){
+        $bookName = $purchaseHistory->bookName;
+        $storeName = $purchaseHistory->storeName;
+        $transactionAmount = $purchaseHistory->transactionAmount;
+        $datetime = $parseDatetime->parseUserDatetime($purchaseHistory->transactionDate);
+        echo "$bookName $storeName $transactionAmount $datetime\n";
+    }
+
+    echo "------------------------\n";
+}
+
+// print_r($processedUserData);
 
 ?>

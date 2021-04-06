@@ -9,7 +9,6 @@ $str = ltrim($str,"[");
 $str = substr_replace($str,"",strrpos($str,"]"));
 $endpos = 5;
 
-//Process data into json formate
 while($endpos > 4){
     $endpos = strpos($str,',',strpos($str,"storeName"));
     $dissectStore = substr($str,0,$endpos);
@@ -22,10 +21,12 @@ while($endpos > 4){
         echo "$dissectObj->cashBalance \n"; 
 
         foreach($datetimeArr as $val){
-            echo "$val[0]---$val[1]---$val[2]\n";
+            $weekday = $val[0];
+            $opentime = $val[1];
+            $closetime = $val[2];
+            echo "$weekday---$opentime---$closetime\n";
         }
         
-        // echo $dissectArr[0]->bookName;
         foreach($dissectArr as $val){
             echo "bookName: $val->bookName\n";
             echo "price: $val->price\n";
@@ -36,4 +37,5 @@ while($endpos > 4){
 
     $str = substr($str,$endpos+2,strlen($str));
 }
+
 ?>
