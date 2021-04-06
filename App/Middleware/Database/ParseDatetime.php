@@ -33,7 +33,7 @@ class ParseDatetime
         $numStart = $matches[0][1];
         
         $officeDay = substr($rawDatetime, 0, $numStart-1);
-        $officeDay = preg_match("/,/",$officeDay) ? explode(",",$officeDay) : $officeDay;    
+        $officeDay = preg_match("/[,-]/",$officeDay) ? preg_split("/[,-]/",$officeDay) : $officeDay;    
         $officeTime = substr($rawDatetime, $numStart);
         $officeTime = explode("-", $officeTime);    
         $officeSet = [$officeDay, $officeTime];
