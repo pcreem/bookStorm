@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Middleware\Database\StoreSchema;
-use PDO;
 
 class DatabaseController implements StoreSchema
 {
@@ -25,7 +24,7 @@ class DatabaseController implements StoreSchema
         
         CREATE TABLE IF NOT EXISTS Users
         (
-        id int NOT NULL AUTO_INCREMENT,
+        id int NOT NULL,
         userName varchar(255) NOT NULL,
         cashBalance float NOT NULL,
         PRIMARY KEY (id)
