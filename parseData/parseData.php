@@ -32,29 +32,11 @@ while($endpos > 4){
 
         array_push($processedStoreData,[$storeId, $storeName,$storeCashBalance,$datetimeArr,$booksArr]);
         $storeId++;
-        // print_r($datetimeArr);
-        // echo "$dissectObj->storeName \n"; 
-        // echo "$dissectObj->cashBalance \n"; 
-
-        // foreach($datetimeArr as $val){
-        //     $weekday = $val[0];
-        //     $opentime = $val[1];
-        //     $closetime = $val[2];
-        //     echo "$weekday---$opentime---$closetime\n";
-        // }
-        
-        // foreach($booksArr as $val){
-        //     echo "bookName: $val->bookName\n";
-        //     echo "price: $val->price\n";
-        // }
-        // echo "\n---------------\n";
         
     }
 
     $storeStr = substr($storeStr,$endpos+2,strlen($storeStr));
 }
-
-print_r($processedStoreData);
 
 //----------------------Process User data------------------------------------
 
@@ -93,25 +75,34 @@ while(strlen($userStr) > 0){
     $userStr = substr($userStr,$endpos+3,strlen($userStr));
 }  
 
-// foreach ($processedUserData as $val){
+//----------------------Generate tables data------------------------------------
 
-//     $id = $val[0];
-//     $name = $val[1];
-//     $cashBalance = $val[2];
+//$processedStoreData = [$storeId, $storeName,$storeCashBalance,$datetimeArr($weekday/$opentime/$closetime),$booksArr(bookName/price)]
+//$processedUserData = [$id, $name, $cashBalance, $purchaseHistory(bookName/storeName/transactionAmount/transactionDate)]
 
-//     echo "$id $name $cashBalance\n";
+$user = [];
+$purchase = [];
 
-//     foreach ($val[3] as $purchaseHistory){
-//         $bookName = $purchaseHistory->bookName;
-//         $storeName = $purchaseHistory->storeName;
-//         $transactionAmount = $purchaseHistory->transactionAmount;
-//         $datetime = $parseDatetime->parseUserDatetime($purchaseHistory->transactionDate);
-//         echo "$bookName $storeName $transactionAmount $datetime\n";
-//     }
+foreach ($processedUserData as $userdata){
+    $userId = $userdata[0];
+    $username = $userdata[1];
+    $cashBalance = $userdata[2];
+    $purchaseHistory = $userdata[3];
 
-//     echo "------------------------\n";
-// }
+    array_push($user,[$userId,$username,$cashBalance]);
+    if (count($purchaseHistory) > 0){
+        foreach ($purchaseHistory as $purchaseData){
+            $bookName = $purchaseData->bookName;
+            $storeName = $purchaseData->storeName;
+            $transactionAmount = $purchaseData->transactionAmount;
+            $transactionDate = $parseDatetime->parseUserDatetime($purchaseData->transactionDate);
 
-print_r($processedUserData);
+            array_push($purchase,[$transactionAmount,$transactionDate,$userId]);
+        }
+    }
+}
+
+print_r($user);
+
 
 ?>
