@@ -17,7 +17,7 @@ $storeStr = dataInitProcess($storeFilePath);
 $parseDatetime = new ParseDatetime;
 $processedStoreData = [];
 $endpos = 5;
-$storeId = 0;
+$storeId = 1;
 while($endpos > 4){
     $endpos = strpos($storeStr,',',strpos($storeStr,"storeName"));
     $dissectStore = substr($storeStr,0,$endpos);
@@ -77,11 +77,13 @@ while(strlen($userStr) > 0){
 
 //----------------------Generate tables data------------------------------------
 
-//$processedStoreData = [$storeId, $storeName,$storeCashBalance,$datetimeArr($weekday/$opentime/$closetime),$booksArr(bookName/price)]
+//$processedStoreData = [$storeId, $storeName,$storeCashBalance,$officeHoursArr($weekday/$opentime/$closetime),$booksArr(bookName/price)]
 //$processedUserData = [$id, $name, $cashBalance, $purchaseHistory(bookName/storeName/transactionAmount/transactionDate)]
 
 $user = [];
+$purchaseRaw = []; //not table
 $purchase = [];
+$purchaseId = 1;
 
 foreach ($processedUserData as $userdata){
     $userId = $userdata[0];
@@ -96,13 +98,90 @@ foreach ($processedUserData as $userdata){
             $storeName = $purchaseData->storeName;
             $transactionAmount = $purchaseData->transactionAmount;
             $transactionDate = $parseDatetime->parseUserDatetime($purchaseData->transactionDate);
-
             array_push($purchase,[$transactionAmount,$transactionDate,$userId]);
+            array_push($purchaseRaw,[$purchaseId, $bookName, $storeName ,$transactionAmount,$transactionDate,$userId]);
+            $purchaseId++;
         }
     }
 }
 
-print_r($user);
+$stores = [];
+$storeNameOnly = []; //not table
+$books = [];
+$bookNameOnly = []; //not table
+$storeBook = [];
+$officeHours = [];
+$bookId = 1;
 
+foreach ($processedStoreData as $storeData){
+    $storeId = $storeData[0];
+    $storeName = $storeData[1];
+    $cashBalance = $storeData[2];
+    $officeHoursArr = $storeData[3];
+    $booksArr = $storeData[4];
 
+    array_push($storeNameOnly, $storeName);
+    array_push($stores, [$storeId, $storeName, $cashBalance]);  
+
+    foreach ($officeHoursArr as $officeHoursData){
+        $day = $officeHoursData[0];
+        $opentime = $officeHoursData[1];
+        $closetime = $officeHoursData[2];
+
+        array_push($officeHours,[$day, $opentime, $closetime, $storeId]);
+    }
+
+    foreach ($booksArr as $bookData){
+        $bookName = $bookData->bookName;
+        $price = $bookData->price;
+
+        array_push($bookNameOnly,$bookName);
+        array_push($books,[$bookName,$price]);
+        array_push($storeBook, [$bookId,$storeId]);
+        $bookId++;
+    }
+
+}
+
+//$purchaseRaw,[$purchaseId, $bookName, $storeName ,$transactionAmount,$transactionDate,$userId]
+
+$purchaseBook = [];
+$purchaseStore = [];
+
+foreach ($purchaseRaw as $purchaseVal){
+    $purchaseId = $purchaseVal[0];
+    $purchBookName = $purchaseVal[1];
+    $purchStoreName = $purchaseVal[2];
+    $transactionAmount = $purchaseVal[3];
+
+    $purchStoreId = array_search($purchStoreName,$storeNameOnly)+1;
+    $purchBookId = array_search($purchBookName,$bookNameOnly)+1;
+
+    foreach($storeBook as $sb){
+        $bookId = $sb[0];
+        $storeId = $sb[1];
+
+        $count++;
+
+        $purchStoreId === $storeId && $purchBookId === $bookId ? array_push($purchaseBook,[$bookId, $purchaseId]) : null;    
+    }
+
+    foreach($stores as $storesData){
+        $storeId = $storesData[0];
+        $storeName = $storesData[1];
+        $purchStoreName === $storeName ? array_push($purchaseStore, [$storeId,$purchaseId]) : null;
+    }
+
+}
+
+// There's a problem that some books can't find its belonged store in $purchaseBook.
+// $a = count($purchaseRaw);
+// $b = count($purchaseBook);
+// $c = count($purchaseStore);
+// echo "$a $b $c"; 173 168 173
+
+//----------------------collect tables------------------------------------
+//$user, $purchase, $stores, $books, $storeBook, $officeHours, $purchaseBook, $purchaseStore
+
+print_r($purchaseStore); 
 ?>
