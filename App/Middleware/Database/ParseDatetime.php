@@ -11,8 +11,8 @@ class ParseDatetime
             $time = substr($rawDatetime,11);
             $date = substr($rawDatetime,0,10);
             $year = substr($date,-4);
-            $month = substr($date,-7,2);
-            $day = substr($date,-10,2);
+            $month = substr($date,-10,2);
+            $day = substr($date,-7,2);            
             $amOrPm = substr($time,-2);
             $hour = substr($time,0,2);
             $minute = substr($time,3,2);

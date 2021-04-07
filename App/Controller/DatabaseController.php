@@ -8,11 +8,11 @@ use App\Middleware\Database\ParseDatetime;
 class DatabaseController implements StoreSchema
 {
     private $pdo;
-    private $user, $purchaseHistory, $stores, $books, $storeBook, $officeHours;
+    private $users, $purchaseHistory, $stores, $books, $storeBook, $officeHours;
 
     public function __construct($pdo){
         $this->pdo = $pdo;
-        // $this->createTables();
+        $this->createTables();
         $this->parseData();
         $this->importData();
     }
@@ -79,7 +79,7 @@ class DatabaseController implements StoreSchema
         CREATE TABLE IF NOT EXISTS OfficeHours
         (
         id int NOT NULL AUTO_INCREMENT,
-        day ENUM("Mon","Tues","Weds","Thurs","Fri","Sat","Sun") NOT NULL,
+        day varchar(5) NOT NULL,
         openTime time NOT NULL,
         closeTime time NOT NULL,
         storesId int NOT NULL,
@@ -176,7 +176,7 @@ class DatabaseController implements StoreSchema
         //$processedStoreData = [$storeId, $storeName,$storeCashBalance,$officeHoursArr($weekday/$opentime/$closetime),$booksArr(bookName/price)]
         //$processedUserData = [$id, $name, $cashBalance, $purchaseHistory(bookName/storeName/transactionAmount/transactionDate)]
 
-        $user = [];
+        $users = [];
         $purchaseRaw = [];
         $purchaseId = 1;
 
@@ -186,7 +186,7 @@ class DatabaseController implements StoreSchema
             $cashBalance = $userdata[2];
             $purchaseHistory = $userdata[3];
 
-            array_push($user,[$userId,$username,$cashBalance]);
+            array_push($users,[$userId,$username,$cashBalance]);
             if (count($purchaseHistory) > 0){
                 foreach ($purchaseHistory as $purchaseData){
                     $bookName = $purchaseData->bookName;
@@ -238,8 +238,8 @@ class DatabaseController implements StoreSchema
         }
 
         //----------------------collect tables------------------------------------
-        //$user, $purchaseRaw, $stores, $books, $storeBook, $officeHours
-        $this->user = $user;
+        //$users, $purchaseRaw, $stores, $books, $storeBook, $officeHours
+        $this->users = $users;
         $this->purchaseHistory = $purchaseRaw;
         $this->stores = $stores;
         $this->books = $books;
@@ -250,16 +250,59 @@ class DatabaseController implements StoreSchema
     public function importData(){
         $pdo = $this->pdo;
 
-        $user = $this->user;
+        $users = $this->users;
         $purchaseHistory = $this->purchaseHistory;
         $stores = $this->stores;
         $books = $this->books;
         $storeBook = $this->storeBook;
         $officeHours = $this->officeHours;
 
-        $k = [$user, $purchaseHistory, $stores, $books, $storeBook, $officeHours];
-        foreach($k as $t){
-            print_r($t);
+        try {
+                $sql = 'INSERT INTO Users VALUES(:id, :userName, :cashBalance)';
+                $stmt = $pdo->prepare($sql);
+
+                foreach($users as $user){
+                    $stmt->execute(['id' => $user[0], 'userName' => $user[1], 'cashBalance' => $user[2]]);
+                };
+
+                $sql = 'INSERT INTO PurchaseHistory VALUES(:id, :bookName, :storeName, :transactionAmount, :transactionDate, :userId)';
+                $stmt = $pdo->prepare($sql);
+
+                foreach($purchaseHistory as $data){
+                    $stmt->execute(['id' => $data[0], 'bookName' => $data[1], 'storeName' => $data[2], 'transactionAmount' => $data[3], 'transactionDate' => $data[4], 'userId' => $data[5]]);
+                };
+
+                $sql = 'INSERT INTO Stores VALUES(:id, :storeName, :cashBalance)';
+                $stmt = $pdo->prepare($sql);
+
+                foreach($stores as $store){
+                    $stmt->execute(['id' => $store[0], 'storeName' => $store[1], 'cashBalance' => $store[2]]);
+                };
+
+                $sql = 'INSERT INTO OfficeHours ( day, openTime, closeTime, storesId) VALUES(:day, :openTime, :closeTime, :storesId)';
+                $stmt = $pdo->prepare($sql);
+
+                foreach($officeHours as $data){
+                    $stmt->execute(['day' => $data[0], 'openTime' => $data[1], 'closeTime' => $data[2], 'storesId' => $data[3] ]);
+                };
+
+                $sql = 'INSERT INTO Books (bookName, price) VALUES(:bookName, :price)';
+                $stmt = $pdo->prepare($sql);
+
+                foreach($books as $data){
+                    $stmt->execute(['bookName' => $data[0], 'price' => $data[1]]);
+                };
+
+                $sql = 'INSERT INTO StoreBook (booksId, storesId) VALUES(:booksId, :storesId)';
+                $stmt = $pdo->prepare($sql);
+
+                foreach($storeBook as $data){
+                    $stmt->execute(['booksId' => $data[0], 'storesId' => $data[1]]);
+                };
+            
+            } 
+        catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
 }
