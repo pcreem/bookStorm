@@ -8,5 +8,7 @@ interface StoreSchema
 
     public function createTables();
 
+    public function parseData();
+
     public function importData();
 }
