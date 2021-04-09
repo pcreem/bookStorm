@@ -3,7 +3,7 @@
 namespace App\Property;
 use PDO;
 
-interface UpdateData
+interface Update
 {
     public function __construct(PDO $pdo);
     
