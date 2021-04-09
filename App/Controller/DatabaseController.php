@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-use App\Middleware\Database\StoreSchema;
-use App\Middleware\Database\ParseDatetime;
+use App\Middleware\ParseDatetime;
 
-class DatabaseController implements StoreSchema
+class DatabaseController
 {
     private $pdo;
     private $users, $purchaseHistory, $stores, $books, $storeBook, $officeHours;
@@ -17,7 +16,7 @@ class DatabaseController implements StoreSchema
         $this->importData();
     }
 
-    public function createTables(){
+    private function createTables(){
         $this->pdo->query('
         DROP TABLE IF EXISTS Users, PurchaseHistory, Stores, StoreBook, Books, OfficeHours 
         ');
@@ -116,7 +115,7 @@ class DatabaseController implements StoreSchema
         return [$id, $name, $cashBalance, $purchaseHistory];
     }
 
-    public function parseData(){
+    private function parseData(){
         //----------------------Process Store data------------------------------------
         $storeFilePath = __DIR__ . '/../../Data/book_store_data.json';
         $storeStr = $this->initProcess($storeFilePath);
@@ -247,7 +246,7 @@ class DatabaseController implements StoreSchema
         $this->officeHours = $officeHours;
     }
 
-    public function importData(){
+    private function importData(){
         $pdo = $this->pdo;
 
         $users = $this->users;
