@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 namespace App\Controller;
-use App\Model\ReadStore;
+use App\Property\ReadStore;
 use PDO;
 
 class ReadStoreController implements ReadStore
