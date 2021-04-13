@@ -33,7 +33,7 @@ class ReadStoreModel implements ReadStore
 
         try{
             $sql='
-                SELECT S.storeName, O.openTime 
+                SELECT S.storeName, O.day, O.openTime 
                 FROM Stores S, OfficeHours O 
                 WHERE S.id = O.storesId 
                 AND O.openTime >= :time AND O.day = :day         
@@ -188,15 +188,15 @@ class ReadStoreModel implements ReadStore
     public function searchStores(string $searchTerm) {
         
         try{
-            $sql='
-                SELECT storeName, LENGTH(:searchTerm), LENGTH(storeName),  
-                (LENGTH(:searchTerm)/LENGTH(storeName))*100 AS relevance
+            $sql = "
+                SELECT storeName, LENGTH('$searchTerm'), LENGTH(storeName),  
+                (LENGTH('$searchTerm')/LENGTH(storeName))*100 AS relevance
                 FROM Stores 
-                WHERE storeName REGEXP :searchTerm
-                ORDER BY relevance DESC
-            ';
-            $stmt = $this->pdo->prepare($sql);
-            $stmt->execute(['searchTerm' => $searchTerm]);
+                WHERE storeName REGEXP '$searchTerm'
+                ORDER BY relevance DESC            
+            ";
+
+            $stmt = $this->pdo->query($sql);
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return $result;                
