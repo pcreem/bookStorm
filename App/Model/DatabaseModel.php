@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Model;
 
 use App\Middleware\ParseDatetime;
 
-class DatabaseController
+class DatabaseModel
 {
     private $pdo;
     private $users, $purchaseHistory, $stores, $books, $storeBook, $officeHours;

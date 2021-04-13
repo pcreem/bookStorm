@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Model;
 use App\Property\ReadStore;
 use PDO;
 
-class ReadStoreController implements ReadStore
+class ReadStoreModel implements ReadStore
 {
     private $pdo;
     public function __construct(PDO $pdo){

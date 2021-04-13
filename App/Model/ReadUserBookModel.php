@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Model;
 use App\Property\ReadUserBook;
 use PDO;
 
-class ReadUserBookController implements ReadUserBook
+class ReadUserBookModel implements ReadUserBook
 {
     private $pdo;
     public function __construct(PDO $pdo){

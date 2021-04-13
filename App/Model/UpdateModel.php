@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Model;
 use App\Property\Update;
 use PDO;
 
-class UpdateController implements Update
+class UpdateModel implements Update
 {
     private $pdo;
     public function __construct(PDO $pdo){
