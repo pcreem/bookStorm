@@ -2,45 +2,37 @@
 namespace App\Controller;
 
 use App\Model\ReadStoreModel;
-use App\Model\ReadUserBookModel;
-use App\Model\UpdateModel;
 use PDO;
 
 class StoreController {
 
-    private $requestMethod;
+    private $requestMethod, $askFor, $uriParameters;
 
     private $readStoreModel;
-    private $readUserBookModel;
-    private $updateModel;
 
-    public function __construct(PDO $pdo, $requestMethod)
+    public function __construct(PDO $pdo, $requestMethod, $askFor, $uriParameters)
     {
         $this->requestMethod = $requestMethod;
+        $this->askFor = $askFor;
+        $this->uriParameters = $uriParameters;
 
         $this->readStoreModel = new ReadStoreModel($pdo);
-        $this->readUserBookModel = new ReadUserBookModel($pdo);
-        $this->updateModel = new UpdateModel($pdo);
     }
 
     public function processRequest()
     {
         switch ($this->requestMethod) {
             case 'GET':
-                if ($this->userId) {
-                    $response = $this->getUser($this->userId);
-                } else {
-                    $response = $this->getAllUsers();
-                };
-                break;
-            case 'POST':
-                $response = $this->createUserFromRequest();
-                break;
-            case 'PUT':
-                $response = $this->updateUserFromRequest($this->userId);
-                break;
-            case 'DELETE':
-                $response = $this->deleteUser($this->userId);
+                switch ($this->askFor){
+                    case 'storesOpenAt':
+                        $result  =$this->readStoreModel->storesOpenAt($this->uriParameters['time']);
+                        $response['status_code_header'] = 'HTTP/1.1 200 OK';
+                        $response['body'] = json_encode($result);
+                        break;
+                    default:
+                        $response = $this->notFoundResponse();
+                        break;
+                }
                 break;
             default:
                 $response = $this->notFoundResponse();

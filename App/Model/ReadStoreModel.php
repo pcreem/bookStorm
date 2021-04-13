@@ -15,7 +15,7 @@ class ReadStoreModel implements ReadStore
 
         try{
             $sql='
-                SELECT S.storeName, O.openTime 
+                SELECT S.storeName, O.day, O.openTime 
                 FROM Stores S, OfficeHours O 
                 WHERE S.id = O.storesId AND O.openTime >= :time          
             ';
