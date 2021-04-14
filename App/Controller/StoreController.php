@@ -18,7 +18,8 @@ class StoreController extends StormAbstractClass{
                 switch ($this->askFor){
                     case 'storesOpenAt':
                         //http://127.0.0.1:8000/store/storesOpenAt?time=9:30
-                        $time = $this->uriParameters['time'];
+                        $checkTime = isset($this->uriParameters['time']);
+                        $time = $checkTime ? $this->uriParameters['time']: null;
                         if ($time){
                             $result = $this->readStoreModel->storesOpenAt($time);
                             $response['status_code_header'] = 'HTTP/1.1 200 OK';
@@ -27,8 +28,12 @@ class StoreController extends StormAbstractClass{
                         break;
                     case 'storesOpenOnDayAt':
                         //http://127.0.0.1:8000/store/storesOpenOnDayAt?day=Mon&time=10:00
-                        $day = $this->uriParameters['day'];
-                        $time = $this->uriParameters['time'];
+                        $checkTime = isset($this->uriParameters['time']);
+                        $checkDay = isset($this->uriParameters['day']);
+
+                        $time = $checkTime ? $this->uriParameters['time']: null;
+                        $day = $checkDay ? $this->uriParameters['day']: null;
+
                         if ($day && $time && in_array($day, $this::DaySet)){
                             $result = $this->readStoreModel->storesOpenOnDayAt($day, $time);
                             $response['status_code_header'] = 'HTTP/1.1 200 OK';
@@ -157,9 +162,6 @@ class StoreController extends StormAbstractClass{
                             $response['status_code_header'] = 'HTTP/1.1 200 OK';
                             $response['body'] = json_encode($result);
                         }                        
-                        break;
-                    default:
-                        $response = $this->notFoundResponse();
                         break;
                 }
                 break;

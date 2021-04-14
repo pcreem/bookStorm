@@ -43,7 +43,7 @@ class UserBookController extends StormAbstractClass{
                         }                        
                         break;
                     case 'usersAmountLessWithinDate':
-                        //http://127.0.0.1:8000/user/usersAmountLessWithinDate?amount=3&startDate=2020-01-01&endDate=2020-09-30
+                        //http://127.0.0.1:8000/user/usersAmountLessWithinDate?amount=12.00&startDate=2020-01-01&endDate=2020-09-30
                         $checkAmount = isset($this->uriParameters['amount']);
                         $checkStartDate = $this->validateDate($this->uriParameters['startDate']);
                         $checkEndDate = $this->validateDate($this->uriParameters['endDate']);
@@ -57,10 +57,6 @@ class UserBookController extends StormAbstractClass{
                             $response['status_code_header'] = 'HTTP/1.1 200 OK';
                             $response['body'] = json_encode($result);
                         }                        
-                        break;
-                    
-                    default:
-                        $response = $this->notFoundResponse();
                         break;
                 }
                 break;
