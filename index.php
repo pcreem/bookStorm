@@ -2,12 +2,11 @@
 declare(strict_types=1);
 require_once __DIR__.'/vendor/autoload.php';
 
-use App\Controller\StoreController;
+
 use App\Middleware\ConnectDB;
-use App\Model\DatabaseModel;
-use App\Model\ReadStoreModel;
-use App\Model\ReadUserBookModel;
-use App\Model\UpdateModel;
+use App\Controller\StoreController;
+use App\Controller\UserBookController;
+
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -18,11 +17,13 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 $uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uriPath = explode( '/', $uriPath);
-$storeOrUser = $uriPath[1];
+
+const Storm = ['store', 'user', 'book'];
+$storeOrUserBook = $uriPath[1];
 $askFor = $uriPath[2] ?? null;
 $uriParameters = [];
 
-if ($storeOrUser === 'store' || $storeOrUser === 'user') {
+if (in_array($storeOrUserBook, Storm)) {
 
     $uriQuery = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
 
@@ -46,10 +47,11 @@ $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 // $databaseModel = new DatabaseModel($pdo);
 $readStore = new StoreController($pdo, $requestMethod, $askFor, $uriParameters);
-$readUserBook = new ReadUserBookModel($pdo);
-$update = new UpdateModel($pdo);
+$readUserBook = new UserBookController($pdo, $requestMethod, $askFor, $uriParameters);
 
-$storeOrUser === 'store' ? $readStore->processRequest() : null;
+
+$storeOrUserBook === 'store' ? $readStore->processRequest() : null;
+$storeOrUserBook === 'user' || $storeOrUserBook === 'book' ? $readUserBook->processRequest() : null;
 
 
 ?>

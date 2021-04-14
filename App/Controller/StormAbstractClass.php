@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use PDO;
+use DateTime;
 
 abstract class StormAbstractClass {
 
@@ -16,6 +17,11 @@ abstract class StormAbstractClass {
     }
 
     abstract public function processRequest();
+
+    protected function validateDate($date, $format = 'Y-m-d'){
+        $d = DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) === $date;
+    }
 
     protected function notFoundResponse()
     {

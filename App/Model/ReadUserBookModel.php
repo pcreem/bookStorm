@@ -30,7 +30,7 @@ class ReadUserBookModel implements ReadUserBook
             throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
-
+ 
     public function topXusersByAmountWithinDate(int $x, string $startDate, string $endDate){
 
         try{
@@ -40,7 +40,7 @@ class ReadUserBookModel implements ReadUserBook
                 WHERE DATE(P.transactionDate) BETWEEN :startDate AND :endDate
                 AND P.userId = U.id
                 GROUP BY P.userId, U.userName
-                ORDER BY amound DESC
+                ORDER BY amount DESC
                 LIMIT :x     
             ';
             $stmt = $this->pdo->prepare($sql);
