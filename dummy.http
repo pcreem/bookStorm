@@ -1,0 +1,48 @@
+PUT http://127.0.0.1:8000/store/updateStoreName HTTP/1.1
+content-type:application/json
+
+{
+    "storeId":"100", 
+    "storeName":"test"
+}
+
+###
+
+PUT http://127.0.0.1:8000/book/updateBookName HTTP/1.1
+content-type:application/json
+
+{
+    "bookId":"106", 
+    "bookName":"106test"
+}
+
+###
+
+PUT http://127.0.0.1:8000/book/updateBookPrice HTTP/1.1
+content-type:application/json
+
+{
+    "bookId":"106", 
+    "bookPrice":"1.20"
+}
+
+###
+
+PUT http://127.0.0.1:8000/user/updateUserName HTTP/1.1
+content-type:application/json
+
+{
+    "userId":"100", 
+    "userName":"test"
+}
+
+###
+
+POST http://127.0.0.1:8000/user/userPurchaseOneBook HTTP/1.1
+content-type:application/json
+
+{
+    "userId":"300", 
+    "storeId":"1",
+    "bookId":"3"
+}
