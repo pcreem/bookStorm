@@ -1,27 +1,18 @@
 <?php declare(strict_types=1);
 namespace App\Controller;
 
+use App\Controller\StormAbstractClass;
 use App\Model\ReadStoreModel;
-use PDO;
 
-class StoreController {
+class StoreController extends StormAbstractClass{
 
-    private $requestMethod, $askFor, $uriParameters;
-
-    private $readStoreModel;
     const DaySet = ['Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'];
 
-    public function __construct(PDO $pdo, $requestMethod, $askFor, $uriParameters)
-    {
-        $this->requestMethod = $requestMethod;
-        $this->askFor = $askFor;
-        $this->uriParameters = $uriParameters;
-
-        $this->readStoreModel = new ReadStoreModel($pdo);
-    }
+    private $readStoreModel;
 
     public function processRequest()
     {
+        $this->readStoreModel = new ReadStoreModel($this->pdo);
         switch ($this->requestMethod) {
             case 'GET':
                 switch ($this->askFor){
@@ -180,12 +171,5 @@ class StoreController {
         if ($response['body']) {
             echo $response['body'];
         }
-    }
-
-    private function notFoundResponse()
-    {
-        $response['status_code_header'] = 'HTTP/1.1 404 Not Found';
-        $response['body'] = null;
-        return $response;
     }
 }
