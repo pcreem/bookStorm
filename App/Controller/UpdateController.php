@@ -85,7 +85,7 @@ class UpdateController extends StormAbstractClass{
                         }                        
                         break;
                    
-                }
+                }break;
             case 'POST':
                 switch ($this->askFor){
                     case 'userPurchaseOneBook':
@@ -113,6 +113,7 @@ class UpdateController extends StormAbstractClass{
                 $response = $this->notFoundResponse();
                 break;
         }
+        
         header($response['status_code_header']);
         if ($response['body']) {
             echo $response['body'];

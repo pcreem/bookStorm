@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__.'/vendor/autoload.php';
 
-
+use App\Model\DatabaseModel;
 use App\Middleware\ConnectDB;
 use App\Controller\StoreController;
 use App\Controller\UserBookController;
@@ -46,7 +46,7 @@ $pdo = ConnectDB::getInstance()->getConnection();
 $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-// $databaseModel = new DatabaseModel($pdo);
+$databaseModel = new DatabaseModel($pdo);
 $readStore = new StoreController($pdo, $requestMethod, $askFor, $uriParameters);
 $readUserBook = new UserBookController($pdo, $requestMethod, $askFor, $uriParameters);
 $update = new UpdateController($pdo, $requestMethod, $askFor, $uriParameters);

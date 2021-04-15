@@ -1,8 +1,12 @@
+GET http://127.0.0.1:8000/store/storesOpenAt?time=9:30 HTTP/1.1
+
+###
+
 PUT http://127.0.0.1:8000/store/updateStoreName HTTP/1.1
 content-type:application/json
 
 {
-    "storeId":"100", 
+    "storeId":"1", 
     "storeName":"test"
 }
 
@@ -32,7 +36,7 @@ PUT http://127.0.0.1:8000/user/updateUserName HTTP/1.1
 content-type:application/json
 
 {
-    "userId":"100", 
+    "userId":"1", 
     "userName":"test"
 }
 
@@ -42,7 +46,7 @@ POST http://127.0.0.1:8000/user/userPurchaseOneBook HTTP/1.1
 content-type:application/json
 
 {
-    "userId":"300", 
+    "userId":"3", 
     "storeId":"1",
     "bookId":"3"
 }
